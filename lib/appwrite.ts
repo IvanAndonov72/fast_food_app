@@ -1,4 +1,10 @@
-import { CreateUserPrams, SignInParams } from "@/type";
+import {
+  Category,
+  CreateUserPrams,
+  GetMenuParams,
+  MenuItem,
+  SignInParams,
+} from "@/type";
 import {
   Account,
   Avatars,
@@ -6,6 +12,7 @@ import {
   Databases,
   ID,
   Query,
+  Storage,
 } from "react-native-appwrite";
 
 export const appwriteConfig = {
@@ -13,7 +20,12 @@ export const appwriteConfig = {
   platform: "com.jsm.foorordering",
   projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
   databaseId: "68e013b0001676fe3e9d",
+  bucketId: "68e53eef000a066fe40d",
   userCollectionId: "user",
+  categoriesCollectionId: "categories",
+  menuCollectionId: "menu",
+  customizationsCollectionId: "customizations",
+  menuCustomizationsCollectionId: "menu_customizations",
 };
 
 export const client = new Client();
@@ -26,6 +38,8 @@ client
 export const account = new Account(client);
 
 export const databases = new Databases(client);
+
+export const storage = new Storage(client);
 
 const avatars = new Avatars(client);
 
@@ -77,6 +91,37 @@ export const getCurrentUser = async () => {
     return currentUser.documents[0];
   } catch (error) {
     console.log(error);
+    throw new Error(error as string);
+  }
+};
+
+export const getMenu = async ({ category, query }: GetMenuParams) => {
+  try {
+    const queries: string[] = [];
+
+    if (category) queries.push(Query.equal("categories", category));
+    if (query) queries.push(Query.search("name", query));
+
+    const menus = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.menuCollectionId,
+      queries
+    );
+
+    return menus.documents;
+  } catch (error) {
+    throw new Error(error as string);
+  }
+};
+
+export const getCategories = async (): Promise<Category[]> => {
+  try {
+    const categories = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.categoriesCollectionId
+    );
+    return categories.documents as unknown as Category[];
+  } catch (error) {
     throw new Error(error as string);
   }
 };
