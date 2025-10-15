@@ -1,3 +1,4 @@
+import useAuthStore from "@/store/auth.store";
 import {
   Category,
   CreateUserPrams,
@@ -72,6 +73,7 @@ export const createUser = async ({
 export const signIn = async ({ email, password }: SignInParams) => {
   try {
     const session = await account.createEmailPasswordSession(email, password);
+    await useAuthStore.getState().fetchAuthenticatedUser();
   } catch (error) {
     throw new Error(error as string);
   }
@@ -114,6 +116,37 @@ export const getMenu = async ({ category, query }: GetMenuParams) => {
   }
 };
 
+// lib/appwrite.ts
+export const getMenuById = async ({ id }: { id: string }) => {
+  try {
+    const result = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.menuCollectionId,
+      [
+        Query.equal("$id", id),
+        Query.limit(1),
+        Query.select(["*"]), // Select all fields
+      ]
+    );
+
+    // Assuming 'categories' is a relation field
+    const item = result.documents[0];
+    if (item && item.categories) {
+      // Fetch the related categories document
+      const category = await databases.getDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.categoriesCollectionId,
+        item.categories
+      );
+      item.categories = category;
+    }
+
+    return item;
+  } catch (error) {
+    throw new Error(error as string);
+  }
+};
+
 export const getCategories = async (): Promise<Category[]> => {
   try {
     const categories = await databases.listDocuments(
@@ -121,6 +154,29 @@ export const getCategories = async (): Promise<Category[]> => {
       appwriteConfig.categoriesCollectionId
     );
     return categories.documents as unknown as Category[];
+  } catch (error) {
+    throw new Error(error as string);
+  }
+};
+
+export const updateUser = async (
+  userId: string,
+  data: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    homeAddress?: string;
+    workAddress?: string;
+  }
+) => {
+  try {
+    const updatedUser = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      userId,
+      data
+    );
+    return updatedUser;
   } catch (error) {
     throw new Error(error as string);
   }

@@ -4,6 +4,7 @@ import { Link, router } from "expo-router";
 import CustomInput from "@/components/CustomInput";
 import CustomButton from "@/components/CustomButton";
 import { signIn } from "@/lib/appwrite";
+import useAuthStore from "@/store/auth.store";
 
 const SignIn = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,7 +26,6 @@ const SignIn = () => {
       // povikaj se na appwrite sign in funkcijata
 
       await signIn({ email, password });
-
       router.replace("/");
     } catch (error: any) {
       Alert.alert("Error", error.message);

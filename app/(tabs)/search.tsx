@@ -1,4 +1,4 @@
-import { View, Text, Button, FlatList } from "react-native";
+import { View, Text, Button, FlatList, Image } from "react-native";
 import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useAppwrite from "@/lib/useAppwrite";
@@ -10,6 +10,7 @@ import MenuCard from "@/components/MenuCard";
 import { MenuItem } from "@/type";
 import SearchBar from "@/components/SearchBar";
 import Filter from "@/components/Filter";
+import { images } from "@/constants";
 
 const search = () => {
   const { category, query } = useLocalSearchParams<{
@@ -75,7 +76,23 @@ const search = () => {
             <Filter categories={categories!} />
           </View>
         )}
-        ListEmptyComponent={() => !loading && <Text>No results</Text>}
+        ListEmptyComponent={() =>
+          !loading && (
+            <View className="items-center justify-center py-10">
+              <Image
+                source={images.emptyState}
+                className="w-56 h-56 mb-4"
+                resizeMode="contain"
+              />
+              <Text className="pb-3 font-quicksand-bold">
+                Nothing matched your search 😔
+              </Text>
+              <Text className="text-gray-700 font-quicksand-semibold">
+                Try a different search or check for typos
+              </Text>
+            </View>
+          )
+        }
       />
     </SafeAreaView>
   );

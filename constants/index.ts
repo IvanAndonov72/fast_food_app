@@ -41,6 +41,8 @@ import salad from "@/assets/images/salad.png";
 import success from "@/assets/images/success.png";
 import tomatoes from "@/assets/images/tomatoes.png";
 
+import emptyCart from "@/assets/images/empty-cart.png";
+
 export const CATEGORIES = [
   {
     id: "1",
@@ -66,25 +68,25 @@ export const CATEGORIES = [
 
 export const offers = [
   {
-    id: 1,
+    id: undefined,
     title: "SUMMER COMBO",
     image: burgerOne,
     color: "#D33B0D",
   },
   {
-    id: 2,
+    id: "68e5414c002ae0f26b37",
     title: "BURGER BASH",
     image: burgerTwo,
     color: "#DF5A0C",
   },
   {
-    id: 3,
+    id: "68e5414c0030151b8688",
     title: "PIZZA PARTY",
     image: pizzaOne,
     color: "#084137",
   },
   {
-    id: 4,
+    id: "68e5414c00368ed89997",
     title: "BURRITO DELIGHT",
     image: buritto,
     color: "#EB920C",
@@ -199,4 +201,5 @@ export const images = {
   star,
   trash,
   user,
+  emptyCart,
 };
